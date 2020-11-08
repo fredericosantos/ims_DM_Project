@@ -1,0 +1,5 @@
+**/*.csv
+cup98LRN.txt
+.vscode/settings.json
+**/*-checkpoint.ipynb
+**/*-checkpoint*
