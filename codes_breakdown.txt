@@ -1,4 +1,4 @@
-Brainstorming
+gitBrainstorming
 =============
 
 Frederico
@@ -27,14 +27,19 @@ Breakdown of Codes
     
 
 
+# Frederico:
+# There are codes in the TCODE that do not mean anything! Typo or?
+# TODO: Replace codes by
+# I think this is one of the most important features we have!
+# Get SINGULAR, COUPLE, WIDOW OR GROUP
 
-    
-    TCODE                       Donor title code
-                                000    = _
-                                001    = MR.
-                                001001 = MESSRS.
+
+    TCODE                        Donor title code
+                                000    = _                    # UNKNOWN
+                                001    = MR.                  # 1
+                                001001 = MESSRS.              # 1+
                                 001002 = MR. & MRS.
-                                002    = MRS.
+                                002    = MRS.                 #
                                 002002 = MESDAMES
                                 003    = MISS
                                 003003 = MISSES
@@ -132,18 +137,16 @@ Breakdown of Codes
                                 210    = PROF.
     
 
+# Svitlana:
+# GEOCODE missing values - ˜80K NaN
 
+# Frederico:
+# GEOCODE2 has just some number as values, it has no explanation and we can't explain them;
+# if anyone finds out what they mean, add it here, otherwise, let's drop it
+# ZIP is amazing, we can for sure plot a cloropeth map of the USA with counties, not just states!
 
-    # Svitlana:
-    # GEOCODE missing values - ˜80K NaN
-    
-    # Frederico:
-    # GEOCODE2 has just some number as values, it has no explanation and we can't explain them;
-    # if anyone finds out what they mean, add it here, otherwise, let's drop it
-    # ZIP is amazing, we can for sure plot a cloropeth map of the USA with counties, not just states!
-    
-    # GEOCODE drop votes: Frederico
-    # GEOCODE2 drop votes: Frederico
+# GEOCODE drop votes: Frederico
+# GEOCODE2 drop votes: Frederico
     
     STATE                       State abbreviation (a nominal/symbolic field)
     ZIP                         Zipcode (a nominal/symbolic field)
@@ -156,11 +159,11 @@ Breakdown of Codes
     
 
 
-
-    # Drop rows where DOB > ODATEDW
-    # Drop DOB after obtaining age
-    # [DONE] TODO: create age column
-    # TODO: Do groups of ages ex: 0-18 / 18-30 / 30-60 / 60+
+Frederico:
+# Drop rows where DOB > ODATEDW
+# Drop DOB after obtaining age
+# TODO: create age column [DONE]
+# TODO: Do groups of ages ex: 0-18 / 18-30 / 30-60 / 60+
     
     
     DOB                         Date of birth (YYMM, Year/Month format.)
@@ -192,8 +195,8 @@ Breakdown of Codes
 
 
 
-    # Frederico:
-    # Completely linked to MDMAUD, we can either cluster by True/False MAJOR or go deep into it with MDMAUD
+# Frederico:
+# Completely linked to MDMAUD, we can either cluster by True/False MAJOR or go deep into it with MDMAUD
     
     MAJOR                       Major ($$) Donor Flag
                                 _ = Not a Major Donor
@@ -202,8 +205,8 @@ Breakdown of Codes
 
 
 
-    # Frederico:
-    # Let's break this column down;
+# Frederico:
+# Let's break this column down;
     
     
     MDMAUD                      The Major Donor Matrix code
@@ -237,22 +240,23 @@ Breakdown of Codes
 
 
 
-    # loc[:, "DOMAIN":"WEALTH1"]
-    
-    # Frederico:
-    # TODO: Refactor Domain to have 1 scale for every observation
-    # TODO: Turn CHILD03 into binary
-    
-    # Svitlana:
-    # INCOME missing values  ˜21K NaN
-    # WEALTH1 missing values  ˜45K NaN
-    
-    # Frederico:
-    # WEALTH1 only has nan values when INCOME is nan;
-    # INCOME has non nan values when WEALTH1 has nan values;
-    # WEALTH1 is dependent on INCOME
-    # I had the idea to predict the missing INCOME and WEALTH1 using
-    # classification models.
+# loc[:, "DOMAIN":"WEALTH1"]
+
+# Frederico:
+# What sort of split do we apply on DOMAIN? Do we create new columns for each type of Urbanicity?
+# I created a category where U>C>S>T>R
+# Is the SES global, or defined per type of Urbanicity?
+
+# Svitlana:
+# INCOME missing values  ˜21K NaN
+# WEALTH1 missing values  ˜45K NaN
+
+# Frederico:
+# WEALTH1 only has nan values when INCOME is nan;
+# INCOME has non nan values when WEALTH1 has nan values;
+# WEALTH1 is dependent on INCOME
+# I had the idea to predict the missing INCOME and WEALTH1 using
+# classification models.
     
     
     Family Aggregate Data (FAD)
@@ -277,7 +281,10 @@ Breakdown of Codes
         HOMEOWNR                    Home Owner Flag
                                     H = Home owner
                                     U = Unknown
-    
+# Frederico:
+# TODO: Turn CHILD03~CHILD18 into variable TRUE/FALSE
+# TODO: Can we predict number of children based on TCODE?
+
         CHILD03                     Presence of Children age 0-3
                                     B = Both, F = Female, M = Male
     
@@ -298,12 +305,12 @@ Breakdown of Codes
 
 
 
-    # Frederico:
-    # This scale is relative to each state's wealth, this represents how rich a person is its context;
-    # this variable is not related to WEALTH1
-    
-    # Svitlana: WEALTH2 missing values ˜44K NaN
-    # WEALTH@ highly correlated with WEALTH1 (Pearson coef = 0.86)
+# Frederico:
+# This scale is relative to each state's wealth, this represents how rich a person is its context;
+# this variable is not related to WEALTH1
+
+# Svitlana: WEALTH2 missing values ˜44K NaN
+# WEALTH@ highly correlated with WEALTH1 (Pearson coef = 0.86)
     
     
     WEALTH2                     Wealth Rating
@@ -318,10 +325,10 @@ Breakdown of Codes
 
 
 
-    # Frederico:
-    # I think we can use PCA here or just use HIT only
-    
-    #Svitlana: 'MBCOLECT', 'PUBPHOTO' - low variance columns, could (even should :-)) be dropped
+# Frederico:
+# I think we can use PCA here or just use HIT only
+
+#Svitlana: 'MBCOLECT', 'PUBPHOTO' - low variance columns, could (even should :-)) be dropped
     
     
     HIT                         MOR Flag # HIT (Mail Order Response)
@@ -364,8 +371,8 @@ Breakdown of Codes
 
 
 
-    # Frederico:
-    # Drop rows with (SOLP3 | SOLIH) == 00 since we cannot mail (?)
+# Frederico:
+# Drop rows with (SOLP3 | SOLIH) == 00 since we cannot mail (?)
     
     
     SOLP3                       SOLICIT LIMITATION CODE P3
@@ -394,9 +401,9 @@ Breakdown of Codes
 
 
 
-    # Frederico:
-    # Drop LIFESRC
-    
+# Frederico:
+# Drop LIFESRC
+
     
     Interests of Donors
                                 The following variables reflect donor interests,
@@ -440,9 +447,9 @@ Breakdown of Codes
 
 
 
-    # Frederico:
-    # What does Neighborhood mean, in this context, exactly? County?
-    
+# Frederico:
+# What does Neighborhood mean, in this context, exactly? County?
+
     
     
     Census                      The following variables reflect characteristics
@@ -458,10 +465,10 @@ Breakdown of Codes
         POP90C4                     Percent Male
         POP90C5                     Percent Female
         
-    # Frederico:
-    # Drop ethnicity and ancestry for ethical reasons? I don't feel so great clustering around ethnicity
-    
-    #Sv: ETH12 -  low variance column, should be dropped
+# Frederico:
+# Drop ethnicity and ancestry for ethical reasons? I don't feel so great clustering around ethnicity
+
+#Sv: ETH12 -  low variance column, should be dropped
         
         ETH1                        Percent White
         ETH2                        Percent Black
@@ -480,19 +487,19 @@ Breakdown of Codes
         ETH15                       Percent Cuban
         ETH16                       Percent Other Hispanic
         
-    # Age Medians
+# Age Medians
         
         AGE901                      Median Age of Population
         AGE902                      Median Age of Adults 18 or Older
         AGE903                      Median Age of Adults 25 or Older
         
-    # Age Averages
+# Age Averages
         
         AGE904                      Average Age of Population
         AGE905                      Average Age of Adults >= 18
         AGE906                      Average Age of Adults >= 25
         
-    # Population Percentages
+# Population Percentages
         
         AGE907                      Percent Population Under Age 18
         CHIL1                       Percent Children Under Age 7
@@ -530,14 +537,14 @@ Breakdown of Codes
         HHP1                        Median Person Per Household
         HHP2                        Average Person Per Household
         
-    # Frederico:
-    # I can't see how we can use the percentage of how structures/housing are in the neighborhood;
-    # This would work to create a scale of richness of the neighborhood, which we already have sometimes
-    # We could use a classifier to measure agaisnt WEALTH2/WEALTH1 with this info and predict the missing WEALTH2/WEALTH1
-    # But I think this would be a project by itself, very much outside the scope of this project
-    # I will see if I can do this just for fun
+# Frederico:
+# I can't see how we can use the percentage of how structures/housing are in the neighborhood;
+# This would work to create a scale of richness of the neighborhood, which we already have sometimes
+# We could use a classifier to measure agaisnt WEALTH2/WEALTH1 with this info and predict the missing WEALTH2/WEALTH1
+# But I think this would be a project by itself, very much outside the scope of this project
+# I will see if I can do this just for fun
     
-    #Sv: 'TPE5', 'TPE6', 'AFC3', 'HC15' - low variance columns, should be dropped
+#Sv: 'TPE5', 'TPE6', 'AFC3', 'HC15' - low variance columns, should be dropped
         
         DW1                         Percent Single Unit Structure
         DW2                         Percent Detached Single Unit Structure
@@ -601,17 +608,17 @@ Breakdown of Codes
         RP3                         Percent Renters Paying >= $300 per Month
         RP4                         Percent Renters Paying >= $200 per Month
         
-    # Svitlana: AREA CODES: MSA, ADI, MDA - only 132 NaN
-    
-    # A Metropolitan Statistical Area (MSA) - a region that consists
-    # of a city and its suburbs, plus any surrounding communities
-    
-    # Area Deprivation Index (ADI) - ADI is a factor-based index which uses 17 US Census poverty, education,
-    # housing and employment indicators to characterize census-based regions
-    
-    # A Designated Market Area (DMA) is a group of counties in the United States
-    # that are covered by a specific group of television stations -
-    # Breaking your stats down by DMA is helpful if you are running a TV or Radio campaign.
+# Svitlana: AREA CODES: MSA, ADI, MDA - only 132 NaN
+
+# A Metropolitan Statistical Area (MSA) - a region that consists
+# of a city and its suburbs, plus any surrounding communities
+
+# Area Deprivation Index (ADI) - ADI is a factor-based index which uses 17 US Census poverty, education,
+# housing and employment indicators to characterize census-based regions
+
+# A Designated Market Area (DMA) is a group of counties in the United States
+# that are covered by a specific group of television stations -
+# Breaking your stats down by DMA is helpful if you are running a TV or Radio campaign.
         
         MSA                         MSA Code
         ADI                         ADI Code
@@ -711,7 +718,7 @@ Breakdown of Codes
         OEDC6                       Percent Private Non-Profit Wage or Salaried Worker
         OEDC7                       Percent Unpaid Family Workers
         
-        - Education
+# Education
         EC1                         Median Years of School Completed by Adults 25+
         EC2                         Percent Adults 25+ Grades 0-8
         EC3                         Percent Adults 25+ w/ some High School
@@ -726,7 +733,7 @@ Breakdown of Codes
         SEC4                        Percent Persons Enrolled in Elementary or High School
         SEC5                        Percent Persons in College
         
-        - Military
+# Military
         AFC1                        Percent Adults in Active Military Service
         AFC2                        Percent Males in Active Military Service
         AFC3                        Percent Females in Active Military Service
@@ -738,7 +745,7 @@ Breakdown of Codes
         VC3                         Percent WW2 Veterans Age 16+
         VC4                         Percent Veterans Serving After May 1995 Only
         
-        - Ancestry
+# Ancestry
         ANC1                        Percent Dutch Ancestry
         ANC2                        Percent English Ancestry
         ANC3                        Percent French Ancestry
@@ -755,7 +762,7 @@ Breakdown of Codes
         ANC14                       Percent Swedish Ancestry
         ANC15                       Percent Ukranian Ancestry
         
-        - Native / Foreign
+# Native / Foreign
         POBC1                       Percent Foreign Born
         POBC2                       Percent Born in State of Residence
         LSC1                        Percent English Only Speaking
@@ -763,7 +770,8 @@ Breakdown of Codes
         LSC3                        Percent Asian Speaking
         LSC4                        Percent Other Language Speaking
         
-        - Ownership
+# Ownership
+
         VOC1                        Percent Households w/ 1+ Vehicles
         VOC2                        Percent Households w/ 2+ Vehicles
         VOC3                        Percent Households w/ 3+ Vehicles
@@ -796,8 +804,8 @@ Breakdown of Codes
 
 
 
-    # Frederico:
-    # Reordered columns ADATE, RFA, RDATE, RAMNT to be together: xxxx_n
+# Frederico:
+# Reordered columns ADATE, RFA, RDATE, RAMNT to be together: xxxx_n
     
     Promotion History File
     
@@ -952,18 +960,18 @@ Breakdown of Codes
         ADATE_24                    Date the 94NK promotion was mailed
     
     
+1 > full points 4/4 - 3/4
 
 
+# Frederico:
+# Every donor is Lapsing
 
-    # Frederico:
-    # Every donor is Lapsing
-    
-    # Svitlana: yes, for the moment of June 2017 (as I understand it is the last moment, "today" for this dataset,
-    # last mailing was 17NK) - all donors in RFA_2 are lapsed.
-    # Maybe we can use information from 2016 - RFA_3 to have some additional info about our donors previous
-    # year behavior? I explained near cell with NGIFTALL and CARDGIFT - why, all discussable of course :-)
-    # I've seen some projects online using this column splitting it to RFA_3R, RFA_3F, RFA_3A with RAMNT_3 together
-    # but it's for discussion
+# Svitlana: yes, for the moment of June 2017 (as I understand it is the last moment, "today" for this dataset,
+# last mailing was 17NK) - all donors in RFA_2 are lapsed.
+# Maybe we can use information from 2016 - RFA_3 to have some additional info about our donors previous
+# year behavior? I explained near cell with NGIFTALL and CARDGIFT - why, all discussable of course :-)
+# I've seen some projects online using this column splitting it to RFA_3R, RFA_3F, RFA_3A with RAMNT_3 together
+# but it's for discussion
     
     
     RFA_2
@@ -1121,24 +1129,24 @@ Breakdown of Codes
 
 
 
-    # Svitlana:
-    # RAMNTALL - Dollar amount of lifetime gifts to date
-    
-    # Frederico:
-    # What about an average of lifetime gifts per year and cluster around values?
-    # NGIFTALL and CARDGIFT can give us a sense of how effective card promotions are
-    
-    # Svitlana: CARDGIFT - describes response to card promotions mailed,
-    # as I understand - NK SK TK GK XK - card promotions
-    # NGIFTALL - shows all gifts from donors not only this "sending cards - receiving gifts" scheme,
-    # last fours 17NK (RFA_2) and 16NK (RFA_3), 16TK, 16SK were card promotions
-    # so have some questions about leaving both - NGIFTALL vs. CARDGIFT Pearson 91.46% Spearman 92.34%
-    # I would drop NGIFTALL
-    
-    # There is also could not be any responce from RFA_2 campain as I understand
-    # because RFA_2 was done (ADATE_2 = 2017-06-01)
-    # and the last LASTDATE (Date associated with the most recent gift) is 2017-02-01
-    # so technicallly these are all responces to the all campains except last one RFA_2 (as I understand)
+# Svitlana:
+# RAMNTALL - Dollar amount of lifetime gifts to date
+
+# Frederico:
+# What about an average of lifetime gifts per year and cluster around values?
+# NGIFTALL and CARDGIFT can give us a sense of how effective card promotions are
+
+# Svitlana: CARDGIFT - describes response to card promotions mailed,
+# as I understand - NK SK TK GK XK - card promotions
+# NGIFTALL - shows all gifts from donors not only this "sending cards - receiving gifts" scheme,
+# last fours 17NK (RFA_2) and 16NK (RFA_3), 16TK, 16SK were card promotions
+# so have some questions about leaving both - NGIFTALL vs. CARDGIFT Pearson 91.46% Spearman 92.34%
+# I would drop NGIFTALL
+
+# There is also could not be any responce from RFA_2 campain as I understand
+# because RFA_2 was done (ADATE_2 = 2017-06-01)
+# and the last LASTDATE (Date associated with the most recent gift) is 2017-02-01
+# so technicallly these are all responces to the all campains except last one RFA_2 (as I understand)
      
     
                                     The following fields are summary variables from
@@ -1162,8 +1170,8 @@ Breakdown of Codes
 
 
 
-    # Frederico:
-    # This variable is very important because we can cluster people we can call with marketing campaigns! (???)
+# Frederico:
+# This variable is very important because we can cluster people we can call with marketing campaigns! (???)
     
     
     HPHONE_D                    Indicator for presence of a published home
@@ -1172,8 +1180,8 @@ Breakdown of Codes
 
 
 
-    # Drop bad addresses; we can't mail them
-    # Do we drop the rows with bad mailcode or cluster around these too?
+# Drop bad addresses; we can't mail them
+# Do we drop the rows with bad mailcode or cluster around these too?
     
     MAILCODE                    Mail Code
                                 " "= Address is OK
@@ -1182,18 +1190,18 @@ Breakdown of Codes
 
 
 
-    # Frederico:
-    # We don't need this variable unless we make it the index to make sure our EDAs match
+# Frederico:
+# We don't need this variable unless we make it the index to make sure our EDAs match
     
     CONTROLN                    Control number (unique record identifier)
     
 
 
 
-    # Svitlana:  Eastern Paralyzed Veterans Association (EPVA),
-    # a regional organization that operates in 37 states
-    # I don't think we will need this, it's a source of data, not anything that helps us cluster
-    # Votes to drop: Frederico
+# Svitlana:  Eastern Paralyzed Veterans Association (EPVA),
+# a regional organization that operates in 37 states
+# I don't think we will need this, it's a source of data, not anything that helps us cluster
+# Votes to drop: Frederico
     
     PVASTATE                    EPVA State or PVA State
                                 Indicates whether the donor lives in a state
@@ -1204,7 +1212,7 @@ Breakdown of Codes
 
 
 
-    # To drop
+# To drop
     
     OSOURCE                     Origin Source
                                 - (Only 1rst 3 bytes are used)
@@ -1216,10 +1224,10 @@ Breakdown of Codes
 
 
 
-    # Frederico:
-    # Most likely irrelevant, we do not need the data source to cluster
-    
-    # svitlana: i also do not see a point to leave it
+# Frederico:
+# Most likely irrelevant, we do not need the data source to cluster
+
+# svitlana: i also do not see a point to leave it
     
     DATASRCE                    Source of Overlay Data
                                 Indicates which third-party data source the donor
