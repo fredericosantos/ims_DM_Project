@@ -216,8 +216,6 @@ Frederico:
 
 
 
-# loc[:, "DOMAIN":"WEALTH1"]
-
 # Frederico:
 # What sort of split do we apply on DOMAIN? Do we create new columns for each type of Urbanicity?
 # I created a category where U>C>S>T>R
