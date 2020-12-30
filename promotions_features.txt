@@ -1,0 +1,454 @@
+gitBrainstorming
+=============
+
+Frederico
+---------
+
+Initial thoughts on the project: - Drop rows where MAILCODE == B, SOLP3
+== 0, SOLHI == 0; - Group by Age and Gender - Group by State; plot a lot
+of things into states - Group by ZIP code; plot a lot of things into
+counties
+
+Svitlana
+--------
+
+Right now I am exploring some columns of dataset in svitlana_eda.ipynb,
+where will add some thoughts about columns to choose or drop as well, in
+a process - so I do not copy this information to here
+
+Breakdown of Codes
+==================
+
+
+# Frederico:
+# Reordered columns ADATE, RFA, RDATE, RAMNT to be together: xxxx_n
+    
+    Promotion History File
+    
+                                The fields listed below are from the promotion history file.
+    
+                                PROMOTION CODES:
+                                ----------------
+    
+                                The following lists the promotion codes and their
+                                respective field names (where XXXX refers to ADATE, RFA,
+                                RDATE and RAMNT.)
+    
+                                '17NK' ==> xxxx_2 (mailing was used to construct
+                                                   the target fields)
+                                '16NK' ==> xxxx_3
+                                '16TK' ==> xxxx_4
+                                '16SK' ==> xxxx_5
+                                '16LL' ==> xxxx_6
+                                '16G1' ==> xxxx_7
+                                '16GK' ==> xxxx_8
+                                '16CC' ==> xxxx_9
+                                '16WL' ==> xxxx_10
+                                '16X1' ==> xxxx_11
+                                '16XK' ==> xxxx_12
+                                '15FS' ==> xxxx_13
+                                '15NK' ==> xxxx_14
+                                '15TK' ==> xxxx_15
+                                '15LL' ==> xxxx_16
+                                '15G1' ==> xxxx_17
+                                '15GK' ==> xxxx_18
+                                '15CC' ==> xxxx_19
+                                '15WL' ==> xxxx_20
+                                '15X1' ==> xxxx_21
+                                '15XK' ==> xxxx_22
+                                '14FS' ==> xxxx_23
+                                '14NK' ==> xxxx_24
+    
+                                1st 2 bytes of the code refers to the year of the
+                                mailing while 3rd and 4th bytes refer to the
+                                following promotion codes/types:
+    
+                                LL mailings had labels only
+                                WL mailings had labels only
+                                CC mailings are calendars with stickers but do
+                                   not have labels
+                                FS mailings are blank cards that fold into
+                                   thirds with labels
+                                NK mailings are blank cards with labels
+                                SK mailings are blank cards with labels
+                                TK mailings have thank you printed on the
+                                   outside with labels
+                                GK mailings are general greeting cards (an
+                                   assortment of birthday, sympathy, blank, & get
+                                   well) with labels
+                                XK mailings are Christmas cards with labels
+                                X1 mailings have labels and a notepad
+                                G1 mailings have labels and a notepad
+    
+                                This information could certainly be used to calculate
+                                several summary variables that count the number of
+                                occurrences of various types of promotions received
+                                in the most recent 12-36 months, etc.
+    
+                                RFA (RECENCY/FREQUENCY/AMOUNT)
+                                ------------------------------
+    
+                                The RFA (recency/frequency/amount) status of the
+                                donors (as of the promotion dates) is included in the
+                                RFA fields.
+    
+                                The (current) concatenated version is a nominal
+                                or symbolic field. The individual bytes could
+                                separately be used as fields and refer to the
+                                following:
+    
+                                First Byte of code is concerned with RECENCY
+                                based on Date of the last Gift
+    
+                                F=FIRST TIME DONOR Anyone who has made their
+                                  first donation in the last 6 months and has
+                                  made just one donation.
+    
+                                N=NEW DONOR Anyone who has made their first
+                                  donation in the last 12 months and is not a
+                                  First time donor.  This is everyone who made
+                                  their first donation 7-12 months ago, or
+                                  people who made their first donation between
+                                  0-6 months ago and have made 2 or more
+                                  donations.
+    
+                                A=ACTIVE DONOR Anyone who made their first
+                                  donation more than 12 months ago and has made
+                                  a donation in the last 12 months.
+    
+                                L=LAPSING DONOR A previous donor who made their
+                                  last donation between 13-24 months ago.
+    
+                                I=INACTIVE DONOR A previous donor who has not
+                                  made a donation in the last 24 months.  It is
+                                  people who made a donation 25+ months ago.
+    
+                                S=STAR DONOR STAR Donors are individuals who
+                                  have given to 3 consecutive card mailings.
+    
+    
+                                Second Byte of code is concerned with FREQUENCY
+                                based on the period of recency.  The period of
+                                recency for all groups except L and I is the
+                                last 12 months.  For L it is 13-24 months ago,
+                                and for I it is 25-36 months ago.  There are
+                                four valid frequency codes.
+    
+                                1=One gift in the period of recency
+                                2=Two gift in the period of recency
+                                3=Three gifts in the period of recency
+                                4=Four or more gifts in the period of recency
+    
+                                Third byte of the code is the Amount of the last
+                                gift.
+    
+                                A=$0.01  -  $1.99
+                                B=$2.00  -  $2.99
+                                C=$3.00  -  $4.99
+                                D=$5.00  -  $9.99
+                                E=$10.00 - $14.99
+                                F=$15.00 - $24.99
+                                G=$25.00 and above
+    
+    
+        ADATE_2                     Date the 97NK promotion was mailed
+        ADATE_3                     Date the 96NK promotion was mailed
+        ADATE_4                     Date the 96TK promotion was mailed
+        ADATE_5                     Date the 96SK promotion was mailed
+        ADATE_6                     Date the 96LL promotion was mailed
+        ADATE_7                     Date the 96G1 promotion was mailed
+        ADATE_8                     Date the 96GK promotion was mailed
+        ADATE_9                     Date the 96CC promotion was mailed
+        ADATE_10                    Date the 96WL promotion was mailed
+        ADATE_11                    Date the 96X1 promotion was mailed
+        ADATE_12                    Date the 96XK promotion was mailed
+        ADATE_13                    Date the 95FS promotion was mailed
+        ADATE_14                    Date the 95NK promotion was mailed
+        ADATE_15                    Date the 95TK promotion was mailed
+        ADATE_16                    Date the 95LL promotion was mailed
+        ADATE_17                    Date the 95G1 promotion was mailed
+        ADATE_18                    Date the 95GK promotion was mailed
+        ADATE_19                    Date the 95CC promotion was mailed
+        ADATE_20                    Date the 95WL promotion was mailed
+        ADATE_21                    Date the 95X1 promotion was mailed
+        ADATE_22                    Date the 95XK promotion was mailed
+        ADATE_23                    Date the 94FS promotion was mailed
+        ADATE_24                    Date the 94NK promotion was mailed
+    
+    
+1 > full points 4/4 - 3/4
+
+
+# Frederico:
+# Every donor is Lapsing
+
+# Svitlana: yes, for the moment of June 2017 (as I understand it is the last moment, "today" for this dataset,
+# last mailing was 17NK) - all donors in RFA_2 are lapsed.
+# Maybe we can use information from 2016 - RFA_3 to have some additional info about our donors previous
+# year behavior? I explained near cell with NGIFTALL and CARDGIFT - why, all discussable of course :-)
+# I've seen some projects online using this column splitting it to RFA_3R, RFA_3F, RFA_3A with RAMNT_3 together
+# but it's for discussion
+    
+    
+    RFA_2
+                                (See the section on RFA for the meaning of the
+                                codes)
+    
+        RFA_2R                      Recency code for RFA_2
+                                    F=FIRST TIME DONOR Anyone who has made their
+                                      first donation in the last 6 months and has
+                                      made just one donation.
+    
+                                    N=NEW DONOR Anyone who has made their first
+                                      donation in the last 12 months and is not a
+                                      First time donor.  This is everyone who made
+                                      their first donation 7-12 months ago, or
+                                      people who made their first donation between
+                                      0-6 months ago and have made 2 or more
+                                      donations.
+    
+                                    A=ACTIVE DONOR Anyone who made their first
+                                      donation more than 12 months ago and has made
+                                      a donation in the last 12 months.
+    
+                                    L=LAPSING DONOR A previous donor who made their
+                                      last donation between 13-24 months ago.
+    
+                                    I=INACTIVE DONOR A previous donor who has not
+                                      made a donation in the last 24 months.  It is
+                                      people who made a donation 25+ months ago.
+    
+                                    S=STAR DONOR STAR Donors are individuals who
+                                      have given to 3 consecutive card mailings.
+                                      
+        RFA_2F                      Frequency code for RFA_2
+                                        The period of recency for all groups except L
+                                        and I is the last 12 months.
+                                        For L it is 13-24 months ago,
+                                        and for I it is 25-36 months ago.  There are
+                                        four valid frequency codes.
+    
+                                        1=One gift in the period of recency
+                                        2=Two gift in the period of recency
+                                        3=Three gifts in the period of recency
+                                        4=Four or more gifts in the period of recency
+                                        
+        RFA_2A                      Donation Amount code for RFA_2
+                                        A=$0.01  -  $1.99
+                                        B=$2.00  -  $2.99
+                                        C=$3.00  -  $4.99
+                                        D=$5.00  -  $9.99
+                                        E=$10.00 - $14.99
+                                        F=$15.00 - $24.99
+                                        G=$25.00 and above
+    
+    
+    
+    
+        RFA_2                       Donor's RFA status as of 97NK promotion date
+        RFA_3                       Donor's RFA status as of 96NK promotion date
+        RFA_4                       Donor's RFA status as of 96TK promotion date
+        RFA_5                       Donor's RFA status as of 96SK promotion date
+        RFA_6                       Donor's RFA status as of 96LL promotion date
+        RFA_7                       Donor's RFA status as of 96G1 promotion date
+        RFA_8                       Donor's RFA status as of 96GK promotion date
+        RFA_9                       Donor's RFA status as of 96CC promotion date
+        RFA_10                      Donor's RFA status as of 96WL promotion date
+        RFA_11                      Donor's RFA status as of 96X1 promotion date
+        RFA_12                      Donor's RFA status as of 96XK promotion date
+        RFA_13                      Donor's RFA status as of 95FS promotion date
+        RFA_14                      Donor's RFA status as of 95NK promotion date
+        RFA_15                      Donor's RFA status as of 95TK promotion date
+        RFA_16                      Donor's RFA status as of 95LL promotion date
+        RFA_17                      Donor's RFA status as of 95G1 promotion date
+        RFA_18                      Donor's RFA status as of 95GK promotion date
+        RFA_19                      Donor's RFA status as of 95CC promotion date
+        RFA_20                      Donor's RFA status as of 95WL promotion date
+        RFA_21                      Donor's RFA status as of 95X1 promotion date
+        RFA_22                      Donor's RFA status as of 95XK promotion date
+        RFA_23                      Donor's RFA status as of 94FS promotion date
+        RFA_24                      Donor's RFA status as of 94NK promotion date
+    
+        
+                                The following fields are summary variables from
+                                the promotion history file.
+    
+        CARDPROM                    Lifetime number of card promotions received to
+                                    date. Card promotions are promotion type FS, GK,
+                                    TK, SK, NK, XK, UF, UU.
+        MAXADATE                    Date of the most recent promotion received (in
+                                    YYMM, Year/Month format)
+        NUMPROM                     Lifetime number of promotions received to date
+        CARDPM12                    Number of card promotions received in the last
+                                    12 months (in terms of calendar months translates
+                                    into 9603-9702)
+        NUMPRM12                    Number of promotions received in the last 12
+                                    months (in terms of calendar months translates
+                                    into 9603-9702)
+    
+
+
+
+    
+    
+    Giving History File --------------------------------------------------------------------
+                                The following fields are from the giving history
+                                file.
+    
+        RDATE_3                     Date the gift was received for 96NK
+        RDATE_4                     Date the gift was received for 96TK
+        RDATE_5                     Date the gift was received for 96SK
+        RDATE_6                     Date the gift was received for 96LL
+        RDATE_7                     Date the gift was received for 96G1
+        RDATE_8                     Date the gift was received for 96GK
+        RDATE_9                     Date the gift was received for 96CC
+        RDATE_10                    Date the gift was received for 96WL
+        RDATE_11                    Date the gift was received for 96X1
+        RDATE_12                    Date the gift was received for 96XK
+        RDATE_13                    Date the gift was received for 95FS
+        RDATE_14                    Date the gift was received for 95NK
+        RDATE_15                    Date the gift was received for 95TK
+        RDATE_16                    Date the gift was received for 95LL
+        RDATE_17                    Date the gift was received for 95G1
+        RDATE_18                    Date the gift was received for 95GK
+        RDATE_19                    Date the gift was received for 95CC
+        RDATE_20                    Date the gift was received for 95WL
+        RDATE_21                    Date the gift was received for 95X1
+        RDATE_22                    Date the gift was received for 95XK
+        RDATE_23                    Date the gift was received for 94FS
+        RDATE_24                    Date the gift was received for 94NK
+    
+        RAMNT_3                     Dollar amount of the gift for 96NK
+        RAMNT_4                     Dollar amount of the gift for 96TK
+        RAMNT_5                     Dollar amount of the gift for 96SK
+        RAMNT_6                     Dollar amount of the gift for 96LL
+        RAMNT_7                     Dollar amount of the gift for 96G1
+        RAMNT_8                     Dollar amount of the gift for 96GK
+        RAMNT_9                     Dollar amount of the gift for 96CC
+        RAMNT_10                    Dollar amount of the gift for 96WL
+        RAMNT_11                    Dollar amount of the gift for 96X1
+        RAMNT_12                    Dollar amount of the gift for 96XK
+        RAMNT_13                    Dollar amount of the gift for 95FS
+        RAMNT_14                    Dollar amount of the gift for 95NK
+        RAMNT_15                    Dollar amount of the gift for 95TK
+        RAMNT_16                    Dollar amount of the gift for 95LL
+        RAMNT_17                    Dollar amount of the gift for 95G1
+        RAMNT_18                    Dollar amount of the gift for 95GK
+        RAMNT_19                    Dollar amount of the gift for 95CC
+        RAMNT_20                    Dollar amount of the gift for 95WL
+        RAMNT_21                    Dollar amount of the gift for 95X1
+        RAMNT_22                    Dollar amount of the gift for 95XK
+        RAMNT_23                    Dollar amount of the gift for 94FS
+        RAMNT_24                    Dollar amount of the gift for 94NK
+    
+    
+
+
+
+# Svitlana:
+# RAMNTALL - Dollar amount of lifetime gifts to date
+
+# Frederico:
+# What about an average of lifetime gifts per year and cluster around values?
+# NGIFTALL and CARDGIFT can give us a sense of how effective card promotions are
+
+# Svitlana: CARDGIFT - describes response to card promotions mailed,
+# as I understand - NK SK TK GK XK - card promotions
+# NGIFTALL - shows all gifts from donors not only this "sending cards - receiving gifts" scheme,
+# last fours 17NK (RFA_2) and 16NK (RFA_3), 16TK, 16SK were card promotions
+# so have some questions about leaving both - NGIFTALL vs. CARDGIFT Pearson 91.46% Spearman 92.34%
+# I would drop NGIFTALL
+
+# There is also could not be any responce from RFA_2 campain as I understand
+# because RFA_2 was done (ADATE_2 = 2017-06-01)
+# and the last LASTDATE (Date associated with the most recent gift) is 2017-02-01
+# so technicallly these are all responces to the all campains except last one RFA_2 (as I understand)
+     
+    
+                                    The following fields are summary variables from
+                                    the giving history file.
+    
+        RAMNTALL                    Dollar amount of lifetime gifts to date
+        NGIFTALL                    Number of lifetime gifts to date
+        CARDGIFT                    Number of lifetime gifts to card promotions to date
+        MINRAMNT                    Dollar amount of smallest gift to date
+        MINRDATE                    Date associated with the smallest gift to date
+        MAXRAMNT                    Dollar amount of largest gift to date
+        MAXRDATE                    Date associated with the largest gift to date
+        LASTGIFT                    Dollar amount of most recent gift
+        LASTDATE                    Date associated with the most recent gift
+        FISTDATE                    Date of first gift
+        NEXTDATE                    Date of second gift
+        TIMELAG                     Number of months between first and second gift
+        AVGGIFT                     Average dollar amount of gifts to date
+    
+    
+
+
+
+# Frederico:
+# This variable is very important because we can cluster people we can call with marketing campaigns! (???)
+    
+    
+    HPHONE_D                    Indicator for presence of a published home
+                                phone number
+    
+
+
+
+# Drop bad addresses; we can't mail them
+# Do we drop the rows with bad mailcode or cluster around these too?
+    
+    MAILCODE                    Mail Code
+                                " "= Address is OK
+                                B = Bad Address
+    
+
+
+
+# Frederico:
+# We don't need this variable unless we make it the index to make sure our EDAs match
+    
+    CONTROLN                    Control number (unique record identifier)
+    
+
+
+
+# Svitlana:  Eastern Paralyzed Veterans Association (EPVA),
+# a regional organization that operates in 37 states
+# I don't think we will need this, it's a source of data, not anything that helps us cluster
+# Votes to drop: Frederico
+    
+    PVASTATE                    EPVA State or PVA State
+                                Indicates whether the donor lives in a state
+                                served by the organization's EPVA chapter
+                                P = PVA State
+                                E = EPVA State (Northeastern US)
+    
+
+
+
+# To drop
+    
+    OSOURCE                     Origin Source
+                                - (Only 1rst 3 bytes are used)
+                                - Defaulted to 00000 for conversion
+                                - Code indicating which mailing list the
+                                  donor was originally acquired from
+                                - A nominal or symbolic field.
+    
+
+
+
+# Frederico:
+# Most likely irrelevant, we do not need the data source to cluster
+
+# svitlana: i also do not see a point to leave it
+    
+    DATASRCE                    Source of Overlay Data
+                                Indicates which third-party data source the donor
+                                matched against
+                                1 = MetroMail
+                                2 = Polk
+                                3 = Both
+    
