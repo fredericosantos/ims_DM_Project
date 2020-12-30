@@ -5,3 +5,5 @@ cup98LRN.txt
 **/*-checkpoint*
 **/*.pkl
 **/.ipynb_checkpoints
+
+__pycache__/
