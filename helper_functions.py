@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 import plotly.express as px
+import scipy.stats as ss
+
 colors = (["#505050", "#d1675b"])
 
 
@@ -11,6 +13,19 @@ def check_inconsistency(df, col1, col2):
     inc = len(df[df[col1] < df[col2]])
     print(f"Number of inconsistencies between {col1} and {col2}: {inc}")
     print(f"Number of inconsistencies between {col1} and {col2}: {round((inc/df.shape[0]) * 100, 2)}%")
+    
+
+# Cramer's V - implemetation was taken from link - https://towardsdatascience.com/the-search-for-categorical-correlation-a1cf7f1888c9
+def cramers_v(x, y):
+    confusion_matrix = pd.crosstab(x,y)
+    chi2 = ss.chi2_contingency(confusion_matrix)[0]
+    n = confusion_matrix.sum().sum()
+    phi2 = chi2/n
+    r,k = confusion_matrix.shape
+    phi2corr = max(0, phi2-((k-1)*(r-1))/(n-1))
+    rcorr = r-((r-1)**2)/(n-1)
+    kcorr = k-((k-1)**2)/(n-1)
+    return np.sqrt(phi2corr/min((kcorr-1),(rcorr-1)))
     
     
 def plotly_dist(df, col1):
