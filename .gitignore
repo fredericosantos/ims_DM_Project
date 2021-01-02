@@ -7,3 +7,5 @@ cup98LRN.txt
 **/.ipynb_checkpoints
 
 __pycache__/
+
+datasets/cup98val.zip
