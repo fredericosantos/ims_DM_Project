@@ -2,9 +2,14 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 import scipy.stats as ss
+from sklearn.cluster import AgglomerativeClustering
+from scipy.cluster.hierarchy import dendrogram
+import plotly.io as pio
 
 colors = (["#505050", "#d1675b"])
 
+def save_graph(figure, name: "plots/name.plotly"):
+    pio.write_json(figure, f"plots/{name}.plotly")
 
 def check_inconsistency(df, col1, col2):
     """
@@ -26,6 +31,39 @@ def cramers_v(x, y):
     rcorr = r-((r-1)**2)/(n-1)
     kcorr = k-((k-1)**2)/(n-1)
     return np.sqrt(phi2corr/min((kcorr-1),(rcorr-1)))
+    
+def get_r2_hc(df, link_method, max_nclus, min_nclus=1, dist="euclidean"):
+    """This function computes the R2 for a set of cluster solutions given by the application of a hierarchical method.
+    The R2 is a measure of the homogenity of a cluster solution. It is based on SSt = SSw + SSb and R2 = SSb/SSt. 
+    
+    Parameters:
+    df (DataFrame): Dataset to apply clustering
+    link_method (str): either "ward", "complete", "average", "single"
+    max_nclus (int): maximum number of clusters to compare the methods
+    min_nclus (int): minimum number of clusters to compare the methods. Defaults to 1.
+    dist (str): distance to use to compute the clustering solution. Must be a valid distance. Defaults to "euclidean".
+    
+    Returns:
+    ndarray: R2 values for the range of cluster solutions
+    """
+    def get_ss(df):
+        ss = np.sum(df.var() * (df.count() - 1))
+        return ss  # return sum of sum of squares of each df variable
+    
+    sst = get_ss(df)  # get total sum of squares
+    
+    r2 = []  # where we will store the R2 metrics for each cluster solution
+    
+    for i in range(min_nclus, max_nclus+1):  # iterate over desired ncluster range
+        cluster = AgglomerativeClustering(n_clusters=i, affinity=dist, linkage=link_method)
+        hclabels = cluster.fit_predict(df) #get cluster labels
+        df_concat = pd.concat((df, pd.Series(hclabels, name='labels')), axis=1)  # concat df with labels
+        ssw_labels = df_concat.groupby(by='labels').apply(get_ss)  # compute ssw for each cluster labels
+        ssb = sst - np.sum(ssw_labels)  # remember: SST = SSW + SSB
+        r2.append(ssb / sst)  # save the R2 of the given cluster solution
+        
+    return np.array(r2)
+    
     
     
 def plotly_dist(df, col1):
