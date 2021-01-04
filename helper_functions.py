@@ -71,6 +71,7 @@ def cluster_profiles(df, label_columns, figsize, compar_titles=None):
         ax[0].axhline(color="black", linestyle="--")
         ax[0].set_title(f"{titl} - {len(handles)} Clusters", fontsize=13)
         ax[0].set_xticklabels(ax[0].get_xticklabels(), rotation=-90, fontsize=9)
+        ax[0].set_ylim(-1.0, 1.0)
         ax[1].set_xticklabels(cluster_labels)
         ax[1].set_xlabel("")
         ax[1].set_ylabel("Absolute Frequency")
