@@ -2,9 +2,28 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 import scipy.stats as ss
-from sklearn.cluster import AgglomerativeClustering
+from sklearn.cluster import DBSCAN, KMeans, AgglomerativeClustering
 from scipy.cluster.hierarchy import dendrogram
 import plotly.io as pio
+import matplotlib.cm as cm
+import matplotlib.pyplot as plt
+from sklearn.base import clone
+from sklearn.metrics import pairwise_distances
+from scipy.cluster.hierarchy import dendrogram
+from sklearn.tree import DecisionTreeClassifier, export_graphviz
+from sklearn.model_selection import train_test_split
+import seaborn as sns
+
+def rf_feat_importance(m, df):
+    return pd.DataFrame(
+        {"cols": df.columns, "imp": m.feature_importances_}
+    ).sort_values("imp", ascending=False)
+
+
+def plot_fi(fi, ax=None):
+    return fi.plot(
+        "cols", "imp", "barh", figsize=(10, len(fi.cols) // 3), legend=False, ax=ax
+    )
 
 colors = (["#505050", "#d1675b"])
 
@@ -20,6 +39,108 @@ def check_inconsistency(df, col1, col2):
     print(f"Number of inconsistencies between {col1} and {col2}: {round((inc/df.shape[0]) * 100, 2)}%")
     
 
+    
+def cluster_profiles(df, label_columns, figsize, compar_titles=None):
+    """
+    Pass df with labels columns of one or multiple clustering labels. 
+    Then specify this label columns to perform the cluster profile according to them.
+    """
+    if compar_titles == None:
+        compar_titles = [""]*len(label_columns)
+        
+    fig, axes = plt.subplots(nrows=len(label_columns), ncols=2, figsize=figsize, squeeze=False)
+    for ax, label, titl in zip(axes, label_columns, compar_titles):
+        # Filtering df
+        drop_cols = [i for i in label_columns if i!=label]
+        dfax = df.drop(drop_cols, axis=1)
+        
+        # Getting the cluster centroids and counts
+        centroids = dfax.groupby(by=label, as_index=False).mean()
+        counts = dfax.groupby(by=label, as_index=False).count().iloc[:,[0,1]]
+        counts.columns = [label, "counts"]
+        
+        # Setting Data
+        pd.plotting.parallel_coordinates(centroids, label, color=sns.color_palette(), ax=ax[0])
+        sns.barplot(x=label, y="counts", data=counts, ax=ax[1])
+
+        #Setting Layout
+        handles, _ = ax[0].get_legend_handles_labels()
+        cluster_labels = ["Cluster {}".format(i) for i in range(len(handles))]
+#         ax[0].annotate(text=titl, xy=(0.95,1.1), xycoords='axes fraction', fontsize=13, fontweight = 'heavy') 
+        ax[0].legend(handles, cluster_labels) # Adaptable to number of clusters
+        ax[0].axhline(color="black", linestyle="--")
+        ax[0].set_title(f"{titl} - {len(handles)} Clusters", fontsize=13)
+        ax[0].set_xticklabels(ax[0].get_xticklabels(), rotation=-90, fontsize=9)
+        ax[1].set_xticklabels(cluster_labels)
+        ax[1].set_xlabel("")
+        ax[1].set_ylabel("Absolute Frequency")
+        ax[1].set_title("Cluster Sizes - {} Clusters".format(len(handles)), fontsize=13)
+    
+    plt.subplots_adjust(hspace=0.5, top=1.0)
+    plt.show()
+    
+def get_ss_variables(df):
+    """Get the SS for each variable
+    """
+    ss_vars = df.var() * (df.count() - 1)
+    return ss_vars
+
+def r2_variables(df, labels):
+    """Get the R² for each variable
+    """
+    sst_vars = get_ss_variables(df)
+    ssw_vars = np.sum(df.groupby(labels).apply(get_ss_variables))
+    return 1 - ssw_vars/sst_vars    
+    
+    
+def plot_dendrogram(df_centroids, threshold, linkage="ward"):
+    hclust = AgglomerativeClustering(
+        linkage=linkage, 
+        affinity='euclidean', 
+        distance_threshold=0, 
+        n_clusters=None
+    )
+    hclust_labels = hclust.fit_predict(df_centroids)
+    
+    # create the counts of samples under each node (number of points being merged)
+    counts = np.zeros(hclust.children_.shape[0])
+    n_samples = len(hclust.labels_)
+
+    # hclust.children_ contains the observation ids that are being merged together
+    # At the i-th iteration, children[i][0] and children[i][1] are merged to form node n_samples + i
+    for i, merge in enumerate(hclust.children_):
+        # track the number of observations in the current cluster being formed
+        current_count = 0
+        for child_idx in merge:
+            if child_idx < n_samples:
+                # If this is True, then we are merging an observation
+                current_count += 1  # leaf node
+            else:
+                # Otherwise, we are merging a previously formed cluster
+                current_count += counts[child_idx - n_samples]
+        counts[i] = current_count
+
+    # the hclust.children_ is used to indicate the two points/clusters being merged (dendrogram's u-joins)
+    # the hclust.distances_ indicates the distance between the two points/clusters (height of the u-joins)
+    # the counts indicate the number of points being merged (dendrogram's x-axis)
+    linkage_matrix = np.column_stack(
+        [hclust.children_, hclust.distances_, counts]
+    ).astype(float)
+
+    # Plot the corresponding dendrogram
+    fig = plt.figure(figsize=(11,5))
+    # The Dendrogram parameters need to be tuned
+    y_threshold = threshold
+    dendrogram(linkage_matrix, truncate_mode='level', p=5, color_threshold=y_threshold, above_threshold_color='k')
+    plt.hlines(y_threshold, 0, 1000, colors="r", linestyles="dashed")
+    plt.title(f'Hierarchical Clustering - {linkage.title()}\'s Dendrogram', fontsize=16)
+    plt.xlabel('Number of points in node (or index of point if no parenthesis)')
+    plt.ylabel(f'Euclidean Distance', fontsize=13)
+    plt.show()
+    
+    
+    
+    
 # Cramer's V - implemetation was taken from link - https://towardsdatascience.com/the-search-for-categorical-correlation-a1cf7f1888c9
 def cramers_v(x, y):
     confusion_matrix = pd.crosstab(x,y)
@@ -96,7 +217,8 @@ def get_non_census_features(dataframe) -> list:
     for f in features_census:
         features_non_census.remove(f)
     return features_non_census
-        
+
+
 def get_census_features():
     return [
     "POP901",
